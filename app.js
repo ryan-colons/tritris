@@ -168,7 +168,7 @@ function printMap () {
 }
 
 // serve static site
-app.use(express.static(path.join(__dirname, 'public/_site')));
+// app.use(express.static(path.join(__dirname, 'public/_site')));
 
 app.use(bodyParser.urlencoded());
 
@@ -200,8 +200,8 @@ app.post('*', (req, res) => {
 });
 
 // handle 404s
-app.get('*', (req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'public/_site/404.html'));
-});
+// app.get('*', (req, res) => {
+//     res.status(404).sendFile(path.join(__dirname, 'public/_site/404.html'));
+// });
 
-app.listen(port, () => console.log(`👂  Listening on port ${port}\n🎮  Please enjoy a fine game of TWOTRIS`));
+app.listen(port, () => console.log(`👂  Listening on port ${port}\n🎮  Please enjoy a fine game of THREETRIS`));
