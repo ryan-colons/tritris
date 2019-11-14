@@ -172,6 +172,10 @@ function printMap () {
 
 app.use(bodyParser.urlencoded());
 
+app.get('*', (req, res) => {
+    res.send("GET is not allowed");
+})
+
 // tetris commands
 app.post('*', (req, res) => {
     console.log(req.body.text);
