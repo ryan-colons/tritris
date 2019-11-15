@@ -173,11 +173,20 @@ function printMap () {
 app.use(bodyParser.urlencoded());
 
 app.get('*', (req, res) => {
-    res.send("GET is not allowed");
+    console.log("☀ GET")
+    res.send("<p>Nothing to GET!</p>");
 })
 
 // tetris commands
+app.post('/drop', (req, res) => {
+    console.log("👇 DROP");
+    while (lower()) {};
+    res.set('Content-Type', 'text/plain');
+    res.status(200).send("```\n" + printMap() + "\n```");
+});
+
 app.post('*', (req, res) => {
+    console.log("🌑 POST")
     console.log(req.body.text);
     switch(req.body.text) {
         case "drop":
