@@ -20,7 +20,7 @@ const Tetris = require("./game/tetris-helpers");
 // });
 
 // Initialise
-app.listen(port, () => console.log(`👂  Listening on port ${port}\n🎮  Please enjoy a fine game of THREETRIS`));    
+app.listen(port, () => console.log(`👂  Listening on port ${port}\n🎮  Please enjoy a fine game of TETRIS`));    
 
 app.get('*', (req, res) => {
     console.log("☀ GET")
@@ -56,12 +56,14 @@ app.post('*', (req, res) => {
             break;
     }
 
-    let responseDisplay = "```CloudCannon Tetris\nScore: " + Tetris.score + "\n" + Tetris.printMap() + "\n```";
+    let responseDisplay = "```CloudCannon Tetris\nScore: " + Tetris.score() + "\n" + Tetris.printMap() + "\n```";
     let response = {
         "response_type": "in_channel",
         "text": responseDisplay,
     };
 
     res.set('Content-Type', 'application/json');
-    res.status(200).send(response);
+    // res.status(200).send(response);
+    res.status(200).send(responseDisplay);
+    
 });

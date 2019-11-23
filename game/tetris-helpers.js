@@ -1,6 +1,6 @@
 const mapInfo = {
-    width: 10,
-    height: 14
+    width: 8,
+    height: 12
 };
 const spawnPos = {
     x: 4,
@@ -19,41 +19,49 @@ class Block {
 }
 
 const straightPentomino = [
-    new Block(x - 1, 0),
-    new Block(x, 0),
-    new Block(x + 1, 0),
-    new Block(x + 2, 0),
+    new Block(spawnPos.x - 1, 0),
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x + 1, 0),
+    new Block(spawnPos.x + 2, 0),
 ];
 const squarePentomino = [
-    new Block(x, 0),
-    new Block(x, 1),
-    new Block(x + 1, 0),
-    new Block(x + 1, 1),
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x, 1),
+    new Block(spawnPos.x + 1, 0),
+    new Block(spawnPos.x + 1, 1),
 ];
 const zagPentomino = [
-    new Block(x - 1, 1),
-    new Block(x, 1),
-    new Block(x, 0),
-    new Block(x + 1, 0),
+    new Block(spawnPos.x - 1, 1),
+    new Block(spawnPos.x, 1),
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x + 1, 0),
 ];
 const trianglePentomino = [
-    new Block(x, 0),
-    new Block(x - 1, 1),
-    new Block(x + 1, 1),
-    new Block(x, 1),
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x - 1, 1),
+    new Block(spawnPos.x + 1, 1),
+    new Block(spawnPos.x, 1),
 ];
 const hookPentomino = [
-    new Block(x - 1, 0),
-    new Block(x, 0),
-    new Block(x + 1, 0),
-    new Block(x - 1, 1),
+    new Block(spawnPos.x - 1, 0),
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x + 1, 0),
+    new Block(spawnPos.x - 1, 1),
 ];
 
+function cloneBlocks(blocks) {
+    let newBlocks = [];
+    blocks.forEach(block => {
+        newBlocks.push(new Block(block.x, block.y));
+    })
+    return newBlocks;
+}
+
 class Tetromino {
-    constructor(x) {
+    constructor() {
         let pentominoShapes = [straightPentomino, squarePentomino, zagPentomino, trianglePentomino, hookPentomino];
         let chosenPentominoShape = pentominoShapes[Math.floor(Math.random() * pentominoShapes.length)];
-        this.blocks = chosenPentominoShape;
+        this.blocks = cloneBlocks(chosenPentominoShape);
     }
 }
 
@@ -65,12 +73,13 @@ function initMap() {
             map[i][j] = emptySpaceSymbol;
         }
     }
+    score = 0;
     return map;
 }
 
 function spawnTetromino () {
     score++;
-    return new Tetromino(spawnPos.x);
+    return new Tetromino();
 }
 
 function checkSpaceOccupied(x, y) {
@@ -140,10 +149,11 @@ function lower () {
             currentTetromino.blocks[i].y += 1;
         } else {
             map[block.x][block.y] = restingBlockSymbol;
+            checkForCompleteLines();
         }
     }
     if (!canDrop) {
-        currentTetromino = new Tetromino(spawnPos.x);
+        currentTetromino = spawnTetromino();
     }
 
     return canDrop;
@@ -167,6 +177,31 @@ function checkDefeat () {
     return false;
 }
 
+function removeLine(i) {
+    for (; i > 0; i--) {
+        for (let j = 0; j < mapInfo.width; j++) {
+            map[j][i] = map[j][i-1];
+        }
+    }
+    score += 10;
+}
+
+function checkForCompleteLines() {
+    for (let i = mapInfo.height - 1; i >= 0; i--) {
+        let fullLine = true;
+        for (let j = 0; j < mapInfo.width; j++) {
+            if (map[j][i] !== restingBlockSymbol) {
+                fullLine = false;
+                break;
+            }
+        }
+        if (fullLine) {
+            removeLine(i);
+            i++;
+        }
+    }
+}
+
 function printMap () {
     let returnString = "";
 
@@ -184,20 +219,20 @@ function printMap () {
         returnString += "\n";
     }
     if (checkDefeat()) {
-        returnString += "\n== GAME OVER ==\n";
-        initMap();
+        returnString += "\n== GAME OVER ==\nScore: " + score + "pts\n";
+        map = initMap();
     }
     return returnString;
 }
 
+let score = 0;
 let map = initMap();
 let currentTetromino = spawnTetromino();
-let score = 0;
 
 module.exports = {
     shift: shift,
     lower: lower,
     rotate: rotate,
     printMap: printMap,
-    score: score,
+    score: function() {return score},
 }
