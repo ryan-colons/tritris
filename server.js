@@ -30,8 +30,9 @@ app.get('*', (req, res) => {
 // tetris commands
 app.post('*', (req, res) => {
     console.log("🌑 POST")
-    console.log(req.body.text);
-    switch(req.body.text) {
+    let command = req.body.text;
+    console.log(command);
+    switch(command) {
         case "drop":
             while (Tetris.lower()) {};
             break;
@@ -50,7 +51,17 @@ app.post('*', (req, res) => {
             Tetris.rotate();
             Tetris.lower();
             break;
+        default:
+            console.log("Couldn't resolve command " + command);
+            break;
     }
-    res.set('Content-Type', 'text/plain');
-    res.status(200).send("```\n" + Tetris.printMap() + "\n```");
+
+    let responseDisplay = "```CloudCannon Tetris\n" + Tetris.printMap() + "\n```";
+    let response = {
+        "response_type": "in_channel",
+        "text": responseDisplay,
+    };
+
+    res.set('Content-Type', 'application/json');
+    res.status(200).send(response);
 });
