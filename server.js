@@ -56,7 +56,7 @@ app.post('*', (req, res) => {
             break;
     }
 
-    let responseDisplay = "```CloudCannon Tetris\n" + Tetris.printMap() + "\n```";
+    let responseDisplay = "```CloudCannon Tetris\nScore: " + Tetris.score + "\n" + Tetris.printMap() + "\n```";
     let response = {
         "response_type": "in_channel",
         "text": responseDisplay,

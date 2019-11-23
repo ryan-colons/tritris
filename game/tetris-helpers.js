@@ -1,9 +1,9 @@
 const mapInfo = {
-    width: 6,
-    height: 8
+    width: 10,
+    height: 14
 };
 const spawnPos = {
-    x: 3,
+    x: 4,
     y: 0
 };
 
@@ -18,13 +18,42 @@ class Block {
     }
 }
 
-class Triomino {
+const straightPentomino = [
+    new Block(x - 1, 0),
+    new Block(x, 0),
+    new Block(x + 1, 0),
+    new Block(x + 2, 0),
+];
+const squarePentomino = [
+    new Block(x, 0),
+    new Block(x, 1),
+    new Block(x + 1, 0),
+    new Block(x + 1, 1),
+];
+const zagPentomino = [
+    new Block(x - 1, 1),
+    new Block(x, 1),
+    new Block(x, 0),
+    new Block(x + 1, 0),
+];
+const trianglePentomino = [
+    new Block(x, 0),
+    new Block(x - 1, 1),
+    new Block(x + 1, 1),
+    new Block(x, 1),
+];
+const hookPentomino = [
+    new Block(x - 1, 0),
+    new Block(x, 0),
+    new Block(x + 1, 0),
+    new Block(x - 1, 1),
+];
+
+class Tetromino {
     constructor(x) {
-        if (Math.random() > 0.5) {
-            this.blocks = [new Block(x, 0), new Block(x + 1, 0), new Block(x + 2, 0)];
-        } else {
-            this.blocks = [new Block(x, 0), new Block(x + 1, 0), new Block(x, 1)];
-        }
+        let pentominoShapes = [straightPentomino, squarePentomino, zagPentomino, trianglePentomino, hookPentomino];
+        let chosenPentominoShape = pentominoShapes[Math.floor(Math.random() * pentominoShapes.length)];
+        this.blocks = chosenPentominoShape;
     }
 }
 
@@ -39,8 +68,9 @@ function initMap() {
     return map;
 }
 
-function spawnTriomino () {
-    return new Triomino(spawnPos.x);
+function spawnTetromino () {
+    score++;
+    return new Tetromino(spawnPos.x);
 }
 
 function checkSpaceOccupied(x, y) {
@@ -92,28 +122,28 @@ function getShiftedCoords(blocks, xIncrement, yIncrement) {
 }
 
 function rotate() {
-    let rotatedCoords = getRotatedCoords(currentTriomino.blocks);
+    let rotatedCoords = getRotatedCoords(currentTetromino.blocks);
     let canRotate = !checkSpacesOccupied(rotatedCoords);
 
     if (canRotate) {
-        currentTriomino.blocks = rotatedCoords;
+        currentTetromino.blocks = rotatedCoords;
     }
 }
 
 function lower () {
-    let loweredCoords = getShiftedCoords(currentTriomino.blocks, 0, 1);
+    let loweredCoords = getShiftedCoords(currentTetromino.blocks, 0, 1);
     let canDrop = !checkSpacesOccupied(loweredCoords);
 
-    for (let i = 0; i < currentTriomino.blocks.length; i++) {
-        let block = currentTriomino.blocks[i];
+    for (let i = 0; i < currentTetromino.blocks.length; i++) {
+        let block = currentTetromino.blocks[i];
         if (canDrop) {
-            currentTriomino.blocks[i].y += 1;
+            currentTetromino.blocks[i].y += 1;
         } else {
             map[block.x][block.y] = restingBlockSymbol;
         }
     }
     if (!canDrop) {
-        currentTriomino = new Triomino(spawnPos.x);
+        currentTetromino = new Tetromino(spawnPos.x);
     }
 
     return canDrop;
@@ -121,11 +151,11 @@ function lower () {
 
 // direction should be -1 (left) or 1 (right)
 function shift(direction) {
-    let shiftedCoords = getShiftedCoords(currentTriomino.blocks, direction, 0);
+    let shiftedCoords = getShiftedCoords(currentTetromino.blocks, direction, 0);
     let canShift = !checkSpacesOccupied(shiftedCoords);
     if (canShift) {
-        for (let i = 0; i < currentTriomino.blocks.length; i++) {
-            currentTriomino.blocks[i].x += direction;
+        for (let i = 0; i < currentTetromino.blocks.length; i++) {
+            currentTetromino.blocks[i].x += direction;
         }
     }
 }
@@ -143,7 +173,7 @@ function printMap () {
     for (let i = 0; i < mapInfo.height; i++) {
         for (let j = 0; j < mapInfo.width; j++) {
             let char = map[j][i];
-            currentTriomino.blocks.forEach(block => {
+            currentTetromino.blocks.forEach(block => {
                 if (j === block.x && i == block.y) {
                     char = movingBlockSymbol;
                     return;
@@ -161,11 +191,13 @@ function printMap () {
 }
 
 let map = initMap();
-let currentTriomino = spawnTriomino();
+let currentTetromino = spawnTetromino();
+let score = 0;
 
 module.exports = {
     shift: shift,
     lower: lower,
     rotate: rotate,
     printMap: printMap,
+    score: score,
 }
