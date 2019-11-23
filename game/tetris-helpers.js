@@ -28,7 +28,7 @@ class Triomino {
     }
 }
 
-export function initMap() {
+function initMap() {
     let map = [];
     for (let i = 0; i < mapInfo.width; i++) {
         map[i] = [];
@@ -39,16 +39,16 @@ export function initMap() {
     return map;
 }
 
-export function spawnTrimino () {
+function spawnTriomino () {
     return new Triomino(spawnPos.x);
 }
 
-export function checkSpaceOccupied(x, y) {
+function checkSpaceOccupied(x, y) {
     if (x < 0 || x >= mapInfo.width || y >= mapInfo.height) return true;
     return map[x][y] === restingBlockSymbol;
 }
 
-export function checkSpacesOccupied(blocks) {
+function checkSpacesOccupied(blocks) {
     for (let i = 0; i < blocks.length; i++) {
         let block = blocks[i];
         if (checkSpaceOccupied(block.x, block.y)) {
@@ -58,7 +58,7 @@ export function checkSpacesOccupied(blocks) {
     return false;
 }
 
-export function getHighestLeftestBlock(blocks) {
+function getHighestLeftestBlock(blocks) {
     let highest = blocks[0];
     for (let i = 1; i < blocks.length; i++) {
         let block = blocks[i];
@@ -71,7 +71,7 @@ export function getHighestLeftestBlock(blocks) {
     return highest;
 }
 
-export function getRotatedCoords(blocks) {
+function getRotatedCoords(blocks) {
     let origin = getHighestLeftestBlock(blocks);
     let xOffset = origin.x, yOffset = origin.y;
     for (let i = 0; i < blocks.length; i++) {
@@ -85,13 +85,13 @@ export function getRotatedCoords(blocks) {
     return blocks;
 }
 
-export function getShiftedCoords(blocks, xIncrement, yIncrement) {
+function getShiftedCoords(blocks, xIncrement, yIncrement) {
     return blocks.map(block => {
         return new Block(block.x + xIncrement, block.y + yIncrement);
     });
 }
 
-export function rotate() {
+function rotate() {
     let rotatedCoords = getRotatedCoords(currentTriomino.blocks);
     let canRotate = !checkSpacesOccupied(rotatedCoords);
 
@@ -100,7 +100,7 @@ export function rotate() {
     }
 }
 
-export function lower () {
+function lower () {
     let loweredCoords = getShiftedCoords(currentTriomino.blocks, 0, 1);
     let canDrop = !checkSpacesOccupied(loweredCoords);
 
@@ -120,7 +120,7 @@ export function lower () {
 }
 
 // direction should be -1 (left) or 1 (right)
-export function shift(direction) {
+function shift(direction) {
     let shiftedCoords = getShiftedCoords(currentTriomino.blocks, direction, 0);
     let canShift = !checkSpacesOccupied(shiftedCoords);
     if (canShift) {
@@ -130,14 +130,14 @@ export function shift(direction) {
     }
 }
 
-export function checkDefeat () {
+function checkDefeat () {
     for (let x = 0; x < mapInfo.width; x++) {
         if (map[x][0] === restingBlockSymbol) return true;
     }
     return false;
 }
 
-export function printMap () {
+function printMap () {
     let returnString = "";
 
     for (let i = 0; i < mapInfo.height; i++) {
@@ -160,5 +160,12 @@ export function printMap () {
     return returnString;
 }
 
-let map = Tetris.initMap();
-let currentTriomino = Tetris.spawnTriomino();
+let map = initMap();
+let currentTriomino = spawnTriomino();
+
+module.exports = {
+    shift: shift,
+    lower: lower,
+    rotate: rotate,
+    printMap: printMap,
+}
