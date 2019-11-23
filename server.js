@@ -63,7 +63,6 @@ app.post('*', (req, res) => {
     };
 
     res.set('Content-Type', 'application/json');
-    // res.status(200).send(response);
-    res.status(200).send(responseDisplay);
+    res.status(200).send(response);
     
 });
