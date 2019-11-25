@@ -51,6 +51,9 @@ app.post('*', (req, res) => {
             Tetris.rotate();
             Tetris.lower();
             break;
+        case "restart":
+            Tetris.start();
+            break;
         default:
             console.log("Couldn't resolve command " + command);
             break;

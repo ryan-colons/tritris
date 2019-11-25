@@ -31,22 +31,34 @@ const squarePentomino = [
     new Block(spawnPos.x + 1, 1),
 ];
 const zagPentomino = [
+    new Block(spawnPos.x, 0),
     new Block(spawnPos.x - 1, 1),
     new Block(spawnPos.x, 1),
-    new Block(spawnPos.x, 0),
     new Block(spawnPos.x + 1, 0),
 ];
+const flippedZagPentomino = [
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x - 1, 0),
+    new Block(spawnPos.x, 1),
+    new Block(spawnPos.x + 1, 1),
+];
 const trianglePentomino = [
+    new Block(spawnPos.x, 1),
     new Block(spawnPos.x, 0),
     new Block(spawnPos.x - 1, 1),
     new Block(spawnPos.x + 1, 1),
-    new Block(spawnPos.x, 1),
 ];
 const hookPentomino = [
     new Block(spawnPos.x - 1, 0),
     new Block(spawnPos.x, 0),
     new Block(spawnPos.x + 1, 0),
     new Block(spawnPos.x - 1, 1),
+];
+const flippedHookPentomino = [
+    new Block(spawnPos.x + 1, 0),
+    new Block(spawnPos.x, 0),
+    new Block(spawnPos.x - 1, 0),
+    new Block(spawnPos.x + 1, 1),
 ];
 
 function cloneBlocks(blocks) {
@@ -59,7 +71,7 @@ function cloneBlocks(blocks) {
 
 class Tetromino {
     constructor() {
-        let pentominoShapes = [straightPentomino, squarePentomino, zagPentomino, trianglePentomino, hookPentomino];
+        let pentominoShapes = [straightPentomino, squarePentomino, zagPentomino, trianglePentomino, hookPentomino, flippedHookPentomino, flippedZagPentomino];
         let chosenPentominoShape = pentominoShapes[Math.floor(Math.random() * pentominoShapes.length)];
         this.blocks = cloneBlocks(chosenPentominoShape);
     }
@@ -111,7 +123,7 @@ function getHighestLeftestBlock(blocks) {
 }
 
 function getRotatedCoords(blocks) {
-    let origin = getHighestLeftestBlock(blocks);
+    let origin = blocks[0];
     let xOffset = origin.x, yOffset = origin.y;
     for (let i = 0; i < blocks.length; i++) {
         let block = blocks[i];
@@ -225,9 +237,14 @@ function printMap () {
     return returnString;
 }
 
-let score = 0;
-let map = initMap();
-let currentTetromino = spawnTetromino();
+function startFresh() {
+    let score = 0;
+    let map = initMap();
+    let currentTetromino = spawnTetromino();
+}
+
+startFresh();
+
 
 module.exports = {
     shift: shift,
@@ -235,4 +252,5 @@ module.exports = {
     rotate: rotate,
     printMap: printMap,
     score: function() {return score},
+    start: startFresh,
 }
